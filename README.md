@@ -1,3 +1,3 @@
 Keep learning.
 Stay curious.
-stay focus.
+Stay focus.
