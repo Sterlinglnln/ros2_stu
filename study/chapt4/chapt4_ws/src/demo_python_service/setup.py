@@ -21,7 +21,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-          'face_detect = demo_python_service.learn_face_detect:main'  
+          'face_detect = demo_python_service.learn_face_detect:main',
+          'face_detect_node = demo_python_service.face_detect_node:main'
         ],
     },
 )
