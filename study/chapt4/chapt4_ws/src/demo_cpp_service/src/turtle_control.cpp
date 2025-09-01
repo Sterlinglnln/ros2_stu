@@ -25,7 +25,7 @@ public:
 
         // 创建服务
         patrol_server_ = this->create_service<Patrol>(
-            "patrol",
+            "/patrol",
             [&] (const std::shared_ptr<Patrol::Request> request,
                 std::shared_ptr<Patrol::Response> response) -> void {
             // 判断巡逻点是否在模拟器边界内
@@ -39,7 +39,7 @@ public:
                     RCLCPP_INFO(this->get_logger(), "已接收目标巡逻位置: (%.2f, %.2f)，开始前往！", target_x_, target_y_);
                 } else {
                     response->result = Patrol::Response::FAIL;
-                    RCLCPP_WARN(this->get_logger(), "目标位置 (%.2f, %.2f) 超出边界，拒绝执行！");
+                    RCLCPP_WARN(this->get_logger(), "目标位置 (%.2f, %.2f) 超出边界，拒绝执行！", request->target_x, request->target_y);
                 }
             });
     }

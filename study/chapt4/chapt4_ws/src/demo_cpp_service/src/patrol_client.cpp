@@ -10,7 +10,7 @@ using Patrol = chapt4_interfaces::srv::Patrol;
 class PatrolClient : public rclcpp::Node {
 public:
     PatrolClient() : Node("patrol_client") {
-        patrol_client_ = this->create_client<Patrol>("parol");
+        patrol_client_ = this->create_client<Patrol>("/patrol");
         timer_ = this->create_wall_timer(10s, std::bind(&PatrolClient::timer_callback, this));
         srand(time(NULL)); // 初始化随机数种子,使用当前时间
     }
@@ -19,25 +19,25 @@ public:
         while (!patrol_client_->wait_for_service(std::chrono::seconds(1))) {
             // 等待时监测 rclcpp 的状态
             if (!rclcpp::ok()) {
-                RCLCPP_ERROR(this->get_logger(), "Interrupted while waiting for the service. Exiting.");
+                RCLCPP_ERROR(this->get_logger(), "等待服务的过程中被中断，退出。");
                 return;
         }
-            RCLCPP_INFO(this->get_logger(), "service not available, waiting again...");
+            RCLCPP_INFO(this->get_logger(), "等待服务端上线...");
         }
         // 2. 构造请求的对象
         auto request = std::make_shared<Patrol::Request>();
         request->target_x = rand() % 15;  // 生成 0~14 的随机整数
         request->target_y = rand() % 15;
-        RCLCPP_INFO(this->get_logger(), "Requesting patrol to (%.2f, %.2f)", request->target_x, request->target_y);
+        RCLCPP_INFO(this->get_logger(), "请求巡逻点：(%.2f, %.2f)", request->target_x, request->target_y);
         // 3. 发布异步请求，然后等待返回，返回时调用回调函数
         patrol_client_->async_send_request(
             request,
             [&] (rclcpp::Client<Patrol>::SharedFuture result_future) -> void {
                 auto response = result_future.get();
                 if (response->result == Patrol::Response::SUCCESS) {
-                    RCLCPP_INFO(this->get_logger(), "Patrol command accepted.");
+                    RCLCPP_INFO(this->get_logger(), "巡逻点设置成功，正在前往...");
                 } else if (response->result == Patrol::Response::FAIL) {
-                    RCLCPP_WARN(this->get_logger(), "Patrol command rejected.");
+                    RCLCPP_WARN(this->get_logger(), "巡逻点设置失败，请检查位置是否在边界内！");
                 }
             });
     }
