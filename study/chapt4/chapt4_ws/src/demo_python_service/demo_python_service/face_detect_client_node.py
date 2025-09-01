@@ -24,14 +24,13 @@ class FaceDetectorClient(Node):
         request = FaceDetector.Request()
         request.image = self.bridge.cv2_to_imgmsg(self.image)
         
-        # 3. send and wait for the response
+        # 3. 发送异步请求
         future = self.client.call_async(request)
-        rclpy.spin_until_future_complete(self, future)
-        
-        #4. process the response
-        response = future.result()
-        self.get_logger().info(f'Detected {response.number} faces in {response.use_time:.2f} seconds.')
-        self.show_face_locations(response)
+        def request_callback(result_future):
+            response = result_future.result()
+            self.get_logger().info(f'Number of faces detected: {response.number}, using time: {response.use_time}')
+            self.show_face_locations(response)
+        future.add_done_callback(request_callback)
         
     def show_face_locations(self, response):
         for i in range(response.number):
@@ -47,4 +46,5 @@ def main(args=None):
     rclpy.init(args=args)
     face_detect_client = FaceDetectorClient()
     face_detect_client.send_request()
+    rclpy.spin(face_detect_client)
     rclpy.shutdown()
