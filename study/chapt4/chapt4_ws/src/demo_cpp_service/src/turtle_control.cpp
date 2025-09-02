@@ -3,18 +3,26 @@
 #include "turtlesim/msg/pose.hpp"
 #include "chapt4_interfaces/srv/patrol.hpp"
 #include <cmath>
+#include "rcl_interfaces/msg/set_parameters_result.hpp"
+using SetParametersResult = rcl_interfaces::msg::SetParametersResult;
 
 using Patrol = chapt4_interfaces::srv::Patrol;
 
 class turtleController : public rclcpp::Node {
 public:
     turtleController() : Node("turtle_controller") {
-        velocity_publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("turtle1/cmd_vel", 10); // 创建发布者
+        // 声明参数
+        this->declare_parameter("k", 1.0);
+        this->declare_parameter("max_speed", 1.0);
+        this->get_parameter("k", k_);
+        this->get_parameter("max_speed", max_speed_);
 
+        // 创建发布者和订阅者
+        velocity_publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("turtle1/cmd_vel", 10);
         pose_subscription_ = this->create_subscription<turtlesim::msg::Pose>(
             "turtle1/pose", 10,
             std::bind(&turtleController::on_pose_received, this, std::placeholders::_1)
-        ); // 创建订阅者
+        );
 
         // 初始化参数：目标位置、控制参数、停止状态
         k_ = 1.0;           // 比例系数
@@ -42,13 +50,32 @@ public:
                     RCLCPP_WARN(this->get_logger(), "目标位置 (%.2f, %.2f) 超出边界，拒绝执行！", request->target_x, request->target_y);
                 }
             });
+        
+        // 添加参数设置回调
+        parameters_callback_handle_ = this->add_on_set_parameters_callback(
+            [&] (const std::vector<rclcpp::Parameter> &params)
+            -> SetParametersResult {
+                // 遍历所有参数，更新k和max_speed
+                for (auto param : params) {
+                    RCLCPP_INFO(this->get_logger(), "更新参数 %s 值为：%f", param.get_name().c_str(), param.as_double());
+                    if (param.get_name() == "k") {
+                        k_ = param.as_double();
+                    } else if (param.get_name() == "max_speed") {
+                        max_speed_ = param.as_double();
+                    }
+                }
+                auto result = SetParametersResult();
+                result.successful = true;
+                return result;
+        });
     }
 
 private:
-    // 服务、订阅和发布对象
+    // 服务、订阅、发布对象和参数回调句柄
     rclcpp::Service<Patrol>::SharedPtr patrol_server_;
     rclcpp::Subscription<turtlesim::msg::Pose>::SharedPtr pose_subscription_;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr velocity_publisher_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameters_callback_handle_;
 
     // 控制参数
     double target_x_;          // 目标位置X坐标
