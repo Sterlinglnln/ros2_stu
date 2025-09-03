@@ -12,7 +12,7 @@ class TFListener(Node):
     
     def get_transform(self):
         try:
-            result = self.buffer.lookup_transform('base_link', 'bottle_li  nk', rclpy.time.Time(seconds=0), rclpy.time.Duration(seconds=1.0))
+            result = self.buffer.lookup_transform('base_link', 'bottle_link', rclpy.time.Time(seconds=0), rclpy.time.Duration(seconds=1.0))
             translation = result.transform
             ratation_euler = euler_from_quaternion([
                 result.transform.rotation.x,
