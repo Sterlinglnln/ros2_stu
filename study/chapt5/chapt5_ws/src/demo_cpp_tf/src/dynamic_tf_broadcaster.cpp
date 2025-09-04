@@ -1,11 +1,11 @@
 #include <memory>
-#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"  // 提供消息接口
 #include "rclcpp/rclcpp.hpp"
-#include "tf2/LinearMath/Quaternion.h"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
-#include "tf2_ros/transform_broadcaster.h"
-#include "chrono"
-
+#include "tf2/LinearMath/Quaternion.h"              // 提供 tf2::Quaternion 类
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"  // 提供消息类型转换函数
+#include "tf2_ros/transform_broadcaster.h"          // 提供坐标变换广播类
+#include "chrono"                                   // 提供时间相关函数
+// 使用时间单位的字面量，如 10ms
 using namespace std::chrono_literals;
 
 class DynamicTFBroadcasterNode : public rclcpp::Node {
@@ -28,8 +28,8 @@ public:
         transform.transform.translation.y = 3.0;
         transform.transform.translation.z = 0.0;
         tf2::Quaternion quat;
-        quat.setRPY(0, 0, 30 * M_PI / 180);
-        transform.transform.rotation = tf2::toMsg(quat);
+        quat.setRPY(0, 0, 30 * M_PI / 180);                 // 弧度制欧拉角转四元数
+        transform.transform.rotation = tf2::toMsg(quat);    // 转成消息接口类型
         tf_broadcaster_->sendTransform(transform);
     }
 };
