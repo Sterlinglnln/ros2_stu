@@ -11,12 +11,24 @@ def generate_launch_description():
         [pkg_share, 'urdf', 'first_robot.urdf']
     )
 
-    default_rviz_config_path = [pkg_share, 'config', 'display_robot_model.rviz']
+    # 定义RViz配置文件路径 - 修复路径构建方式
+    default_rviz_config_path = launch.substitutions.PathJoinSubstitution(
+        [pkg_share, 'config', 'display_robot_model.rviz']
+    )
     
     # 声明模型路径参数
     action_declare_model_path = launch.actions.DeclareLaunchArgument(
-        name='model', default_value=default_model_path,
-        description='URDF 的绝对路径')
+        name='model', 
+        default_value=default_model_path,
+        description='URDF 的绝对路径'
+    )
+    
+    # 声明RViz配置路径参数
+    action_declare_rviz_config_path = launch.actions.DeclareLaunchArgument(
+        name='rviz_config',
+        default_value=default_rviz_config_path,
+        description='RViz配置文件的路径'
+    )
     
     # 构建机器人描述参数
     robot_description = launch_ros.parameter_descriptions.ParameterValue(
@@ -40,17 +52,18 @@ def generate_launch_description():
         name='joint_state_publisher'
     )
     
-    # RViz2节点
+    # RViz2节点 - 修复参数传递方式
     rviz_node = launch_ros.actions.Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
         output='screen',
-        arguments=['-d', default_rviz_config_path]
+        arguments=['-d', launch.substitutions.LaunchConfiguration('rviz_config')]
     )
     
     return launch.LaunchDescription([
         action_declare_model_path,
+        action_declare_rviz_config_path,  # 添加RViz参数声明
         robot_state_publisher_node,
         joint_state_publisher_node,
         rviz_node
