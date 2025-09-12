@@ -13,7 +13,7 @@ public:
     turtleController() : Node("turtle_controller") {
         // 声明参数
         this->declare_parameter("k", 1.0);
-        this->declare_parameter("max_speed", 1.0);
+        this->declare_parameter("max_speed", 2.0);
         this->get_parameter("k", k_);
         this->get_parameter("max_speed", max_speed_);
 

@@ -100,7 +100,7 @@ private:
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
     auto node = std::make_shared<PatrolClient>();
-    node->update_server_param_k(1.5); // 更新服务端参数 k 的值
+    // node->update_server_param_k(1.5); // 更新服务端参数 k 的值
     rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
