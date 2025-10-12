@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/base.urdf.xacro" />
+    <!-- 包含传感器宏定义 -->
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/imu.urdf.xacro" />
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/camera.urdf.xacro" />
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/laser.urdf.xacro" />
+
+    <!-- 定义机器人 -->
+    <xacro:base_xacro length="0.12" radius="0.1" />
+
+    <!-- 传感器 -->
+    <xacro:imu_xacro xyz="0 0 0.02" />
+    <xacro:camera_xacro xyz="0.1 0 0.075" />
+    <xacro:laser_xacro xyz="0 0 0.1" />
+</robot>

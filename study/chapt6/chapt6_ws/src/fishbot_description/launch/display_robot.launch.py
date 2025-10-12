@@ -33,7 +33,7 @@ def generate_launch_description():
     # 构建机器人描述参数
     robot_description = launch_ros.parameter_descriptions.ParameterValue(
         launch.substitutions.Command(
-            ['cat ', launch.substitutions.LaunchConfiguration('model')]
+            ['xacro ', launch.substitutions.LaunchConfiguration('model')]
         ),
         value_type=str
     )
