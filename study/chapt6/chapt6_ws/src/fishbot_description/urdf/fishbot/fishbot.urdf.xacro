@@ -18,9 +18,37 @@
     <xacro:camera_xacro xyz="0.1 0 0.075" />
     <xacro:laser_xacro xyz="0 0 0.1" />
     <!-- 轮子 -->
-    <xacro:wheel_xacro wheel_name="left_wheel" xyz="0 0.10 -0.06" />
-    <xacro:wheel_xacro wheel_name="right_wheel" xyz="0 -0.10 -0.06" />
-    <xacro:caster_xacro caster_name="front_caster" xyz="0.08 0.0 -0.076" />
-    <xacro:caster_xacro caster_name="back_caster" xyz="-0.08 0.0 -0.076" />
+    <xacro:wheel_xacro wheel_name="left" xyz="0 0.10 -0.06" />
+    <xacro:wheel_xacro wheel_name="right" xyz="0 -0.10 -0.06" />
+    <xacro:caster_xacro caster_name="front" xyz="0.08 0.0 -0.076" />
+    <xacro:caster_xacro caster_name="back" xyz="-0.08 0.0 -0.076" />
 
+    <!-- ros2_control -->
+    <ros2_control name="FishbotController" type="system">
+        <hardware>
+            <plugin>gazebo_ros2_control/GazeboSystemPlugin</plugin>
+        </hardware>
+
+        <!-- 定义车轮关节的控制接口 -->
+        <joints>
+            <joint name="left_wheel_joint" />
+                <command_interface name="velocity" />
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+            </joint>
+
+            <joint name="right_wheel_joint" />
+                <command_interface name="velocity" />
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+            </joint>
+        </joints>
+    </ros2_control>
+
+    <!-- 为gazebo添加控制器插件 -->
+    <gazebo>
+        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+            <parameters>$(find fishbot_description)/config/controllers.yaml</parameters>
+        </plugin>
+    </gazebo>
 </robot>

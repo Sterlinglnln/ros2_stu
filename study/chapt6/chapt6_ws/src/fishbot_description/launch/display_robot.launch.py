@@ -6,12 +6,12 @@ def generate_launch_description():
     # 获取包的共享目录
     pkg_share = get_package_share_directory('fishbot_description')
     
-    # 定义URDF文件路径
+    # 定义XACRO文件路径（改为 fishbot.urdf.xacro）
     default_model_path = launch.substitutions.PathJoinSubstitution(
-        [pkg_share, 'urdf', 'first_robot.urdf']
+        [pkg_share, 'urdf', 'fishbot', 'fishbot.urdf.xacro']
     )
 
-    # 定义RViz配置文件路径 - 修复路径构建方式
+    # 定义RViz配置文件路径
     default_rviz_config_path = launch.substitutions.PathJoinSubstitution(
         [pkg_share, 'config', 'display_robot_model.rviz']
     )
@@ -20,7 +20,7 @@ def generate_launch_description():
     action_declare_model_path = launch.actions.DeclareLaunchArgument(
         name='model', 
         default_value=default_model_path,
-        description='URDF 的绝对路径'
+        description='XACRO 的绝对路径'
     )
     
     # 声明RViz配置路径参数
@@ -52,7 +52,7 @@ def generate_launch_description():
         name='joint_state_publisher'
     )
     
-    # RViz2节点 - 修复参数传递方式
+    # RViz2节点
     rviz_node = launch_ros.actions.Node(
         package='rviz2',
         executable='rviz2',
@@ -63,7 +63,7 @@ def generate_launch_description():
     
     return launch.LaunchDescription([
         action_declare_model_path,
-        action_declare_rviz_config_path,  # 添加RViz参数声明
+        action_declare_rviz_config_path,
         robot_state_publisher_node,
         joint_state_publisher_node,
         rviz_node

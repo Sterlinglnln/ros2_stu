@@ -1,0 +1,24 @@
+# ~/ros2_stu/study/chapt6/chapt6_ws/src/fishbot_description/config/controllers.yaml
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # 控制频率（Hz）
+
+# 差速控制器配置
+fishbot_base_controller:
+  type: diff_drive_controller/DiffDriveController
+  ros__parameters:
+    # 车轮关节名称（与URDF一致）
+    left_wheel_names: ["left_wheel_joint"]
+    right_wheel_names: ["right_wheel_joint"]
+    
+    # 订阅的速度指令话题（必须是/cmd_vel）
+    cmd_vel_topic: "/cmd_vel"
+    
+    # 机器人基础参数（根据你的模型修改）
+    base_frame_id: "base_link"    # 基座坐标系
+    wheel_separation: 0.18        # 轮距（左右轮距离，单位：米）
+    wheel_radius: 0.035           # 车轮半径（单位：米）
+    
+    # 速度限制（可选）
+    linear.x.max_velocity: 0.5    # 最大线速度（米/秒）
+    angular.z.max_velocity: 1.0   # 最大角速度（弧度/秒）

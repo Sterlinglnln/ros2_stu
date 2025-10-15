@@ -1,177 +1,92 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-import os
-import tempfile
-import subprocess
-from textwrap import dedent
-
-from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction
-from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
+import launch
+import launch_ros
 from ament_index_python.packages import get_package_share_directory
-
-
-def _gen_and_spawn(context):
-    # 获取参数
-    world = LaunchConfiguration("world").perform(context)
-    model_name = LaunchConfiguration("model_name").perform(context)
-    xacro_file = LaunchConfiguration("xacro_file").perform(context)
-    left_joint = LaunchConfiguration("left_joint").perform(context)
-    right_joint = LaunchConfiguration("right_joint").perform(context)
-    wheel_separation = LaunchConfiguration("wheel_separation").perform(context)
-    wheel_radius = LaunchConfiguration("wheel_radius").perform(context)
-    odom_frame = LaunchConfiguration("odom_frame").perform(context)
-    base_frame = LaunchConfiguration("base_frame").perform(context)
-    odom_freq = LaunchConfiguration("odom_publish_frequency").perform(context)
-    max_lin = LaunchConfiguration("max_linear_speed").perform(context)
-    max_ang = LaunchConfiguration("max_angular_speed").perform(context)
-
-    # 1) 运行 xacro -> URDF
-    try:
-        urdf_xml = subprocess.run(
-            ["xacro", xacro_file],
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"[gz_sim.launch.py] xacro 生成 URDF 失败: {e.stderr}") from e
-
-    # 2) URDF -> SDF：写入临时 URDF 文件，再调用 `gz sdf -p <file>`
-    try:
-        with tempfile.NamedTemporaryFile(prefix=f"{model_name}_", suffix=".urdf", delete=False, mode="w", encoding="utf-8") as tmp_urdf:
-            tmp_urdf_path = tmp_urdf.name
-            tmp_urdf.write(urdf_xml)
-
-        sdf_xml = subprocess.run(
-            ["gz", "sdf", "-p", tmp_urdf_path],
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"[gz_sim.launch.py] URDF 转 SDF 失败: {e.stderr}") from e
-    finally:
-        # 清理临时 URDF
-        try:
-            os.remove(tmp_urdf_path)
-        except Exception:
-            pass
-
-    # 3) 注入 Gazebo Sim DiffDrive 插件
-    plugin_xml = f"""
-      <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
-        <left_joint>{left_joint}</left_joint>
-        <right_joint>{right_joint}</right_joint>
-        <wheel_separation>{wheel_separation}</wheel_separation>
-        <wheel_radius>{wheel_radius}</wheel_radius>
-
-        <topic>cmd_vel</topic>
-        <odom_frame>{odom_frame}</odom_frame>
-        <robot_base_frame>{base_frame}</robot_base_frame>
-        <odom_publish_frequency>{odom_freq}</odom_publish_frequency>
-        <odom_source>world</odom_source>
-        <max_linear_speed>{max_lin}</max_linear_speed>
-        <max_angular_speed>{max_ang}</max_angular_speed>
-      </plugin>
-    """.rstrip()
-
-    # 简单插入到第一个 </model> 之前
-    insert_pos = sdf_xml.rfind("</model>")
-    if insert_pos == -1:
-        raise RuntimeError("[gz_sim.launch.py] 未在 SDF 中找到 <model>，请检查 xacro/URDF 是否有效。")
-
-    sdf_with_plugin = sdf_xml[:insert_pos] + plugin_xml + sdf_xml[insert_pos:]
-
-    # 4) 写临时 SDF
-    tmp_sdf = tempfile.NamedTemporaryFile(prefix=f"{model_name}_", suffix=".sdf", delete=False)
-    tmp_sdf_path = tmp_sdf.name
-    with open(tmp_sdf_path, "w", encoding="utf-8") as f:
-        f.write(sdf_with_plugin)
-
-    # 5) 启动进程/节点
-    actions = []
-
-    # Gazebo Sim
-    actions.append(
-        ExecuteProcess(
-            cmd=["gz", "sim", "-r", world],
-            output="screen"
-        )
-    )
-
-    # 生成模型
-    actions.append(
-        Node(
-            package="ros_gz_sim",
-            executable="create",
-            name="spawn_fishbot",
-            output="screen",
-            arguments=["-name", model_name, "-file", tmp_sdf_path]
-        )
-    )
-
-    # 桥接
-    actions.append(
-        Node(
-            package="ros_gz_bridge",
-            executable="parameter_bridge",
-            name="ros_gz_bridge",
-            output="screen",
-            arguments=[
-                f"/model/{model_name}/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist",
-                f"/model/{model_name}/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry",
-            ],
-            parameters=[{"use_sim_time": True}],
-        )
-    )
-
-    # robot_state_publisher（直接用原始 URDF）
-    actions.append(
-        Node(
-            package="robot_state_publisher",
-            executable="robot_state_publisher",
-            name="robot_state_publisher",
-            output="screen",
-            parameters=[{"robot_description": urdf_xml, "use_sim_time": True}],
-        )
-    )
-
-    return actions
-
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+import os
 
 def generate_launch_description():
-    pkg_share = get_package_share_directory("fishbot_description")
-    default_xacro = os.path.join(pkg_share, "urdf", "fishbot", "fishbot.urdf.xacro")
+    # 获取默认路径
+    robot_name_in_model = "fishbot"
+    urdf_tutorial_path = get_package_share_directory("fishbot_description")
+    default_model_path = os.path.join(urdf_tutorial_path, 'urdf', 'fishbot', 'fishbot.urdf.xacro')
+    default_world_path = os.path.join(urdf_tutorial_path, 'worlds', 'empty.sdf')
+    
+    # 控制器配置文件路径
+    controllers_config_path = os.path.join(urdf_tutorial_path, 'config', 'controllers.yaml')
 
-    return LaunchDescription([
-        DeclareLaunchArgument(
-            "world",
-            default_value="empty.sdf",
-            description="Gazebo Sim world file (absolute path or resolvable via GZ_RESOURCE_PATH)"
-        ),
-        DeclareLaunchArgument(
-            "model_name",
-            default_value="fishbot",
-            description="Model name inside Gazebo Sim"
-        ),
-        DeclareLaunchArgument(
-            "xacro_file",
-            default_value=default_xacro,
-            description="Path to fishbot.urdf.xacro"
-        ),
-        # 关键差速参数与关节名（按你的 xacro 实际命名覆盖）
-        DeclareLaunchArgument("left_joint", default_value="left_wheel_joint"),
-        DeclareLaunchArgument("right_joint", default_value="right_wheel_joint"),
-        DeclareLaunchArgument("wheel_separation", default_value="0.16"),
-        DeclareLaunchArgument("wheel_radius", default_value="0.032"),
-        DeclareLaunchArgument("odom_frame", default_value="odom"),
-        DeclareLaunchArgument("base_frame", default_value="base_link"),
-        DeclareLaunchArgument("odom_publish_frequency", default_value="50"),
-        DeclareLaunchArgument("max_linear_speed", default_value="2.0"),
-        DeclareLaunchArgument("max_angular_speed", default_value="6.0"),
+    # 为launch声明参数
+    action_declare_arg_mode_path = launch.actions.DeclareLaunchArgument(
+        name='model', default_value=str(default_model_path),
+        description='URDF的绝对路径')
+    
+    action_declare_arg_world_path = launch.actions.DeclareLaunchArgument(
+        name='world', default_value=str(default_world_path),
+        description='世界文件的绝对路径')
+    
+    # 获取文件内容生成新的参数
+    robot_description = launch_ros.parameter_descriptions.ParameterValue(
+        launch.substitutions.Command(
+            ['xacro ', launch.substitutions.LaunchConfiguration('model')]),
+        value_type=str)
+    
+    robot_state_publisher_node = launch_ros.actions.Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        parameters=[{'robot_description': robot_description}]
+    )
 
-        OpaqueFunction(function=_gen_and_spawn),
+    # 通过 IncludeLaunchDescription 引入ros_gz_sim的launch文件
+    launch_gz_sim = launch.actions.IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [get_package_share_directory('ros_gz_sim'), '/launch', '/gz_sim.launch.py']),
+        # 加载世界文件
+        launch_arguments={
+            'gz_args': [launch.substitutions.LaunchConfiguration('world')],
+            'use_sim_time': 'true'
+        }.items()
+    )
+    
+    # 请求加载机器人模型
+    spawn_entity_node = launch_ros.actions.Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=['-name', robot_name_in_model,
+                   '-topic', 'robot_description'],
+        output='screen'
+    )
+    
+    # 控制器管理器节点
+    controller_manager_node = launch_ros.actions.Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        parameters=[{'robot_description': robot_description},
+                    controllers_config_path],
+        output='screen'
+    )
+    
+    # 激活差速控制器
+    activate_diff_drive_spawner = launch_ros.actions.Node(
+        cmd=['ros2', 'control', 'set_controller_state', 'fishbot_base_controller', 'active'],
+        output='screen'
+    )
+    
+    # 键盘遥控节点
+    teleop_node = launch_ros.actions.Node(
+        package='teleop_twist_keyboard',
+        executable='teleop_twist_keyboard',
+        name='teleop_twist_keyboard',
+        output='screen',
+        prefix='xterm -e',
+        parameters=[{'use_sim_time': True}]
+    )
+    
+    return launch.LaunchDescription([
+        action_declare_arg_mode_path,
+        action_declare_arg_world_path,
+        robot_state_publisher_node,
+        launch_gz_sim,
+        spawn_entity_node,
+        controller_manager_node,
+        activate_diff_drive_spawner,
+        teleop_node
     ])
