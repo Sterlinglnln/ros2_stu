@@ -5,3 +5,6 @@ log/
 
 # Ignore vscode settings
 .vscode/
+
+#macOS specific files
+.DS_Store
