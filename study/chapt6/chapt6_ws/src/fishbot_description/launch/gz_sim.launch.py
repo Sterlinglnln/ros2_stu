@@ -121,8 +121,8 @@ def _gen_and_spawn(context):
             name="ros_gz_bridge",
             output="screen",
             arguments=[
-                f"/model/{model_name}/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist",
-                f"/model/{model_name}/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry",
+                f"/cmd_vel@geometry_msgs/msg/Twist@/model/{model_name}/cmd_vel@gz.msgs.Twist",
+                f"/odometry@nav_msgs/msg/Odometry@/model/{model_name}/odometry@gz.msgs.Odometry",
             ],
             parameters=[{"use_sim_time": True}],
         )
