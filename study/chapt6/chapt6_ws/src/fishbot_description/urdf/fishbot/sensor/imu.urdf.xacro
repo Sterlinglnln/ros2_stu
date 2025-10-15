@@ -24,7 +24,9 @@
                 </material>
             </collision>
 
-            <xacro:box_inertia m="0.05" w="0.02" h="0.02" d="0.02" />
+            <inertial>
+                <xacro:box_inertia m="0.05" w="0.02" h="0.02" d="0.02" />
+            </inertial>
         </link>
 
         <joint name="imu_joint" type="fixed">

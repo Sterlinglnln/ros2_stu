@@ -5,14 +5,6 @@
     
     <!-- 机器人底座 -->
     <xacro:macro name="base_xacro" params="length radius">
-        <link name="base_footprint" />
-
-        <joint name="base_joint" type="fixed">
-            <parent link="base_footprint"/>
-            <child link="base_link"/>
-            <origin xyz="0 0 ${length/2.0+0.032-0.001}" rpy="0 0 0" />
-        </joint>
-
         <link name="base_link">
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -30,8 +22,10 @@
                     <cylinder length="${length}" radius="${radius}" />
                 </geometry>
             </collision>
-
-            <xacro:cylinder_inertia m="1.0" r="${radius}" h="${length}" />
+            
+            <inertial>
+                <xacro:cylinder_inertia m="1.0" r="${radius}" h="${length}" />
+            </inertial>
         </link>
     </xacro:macro>
 </robot>

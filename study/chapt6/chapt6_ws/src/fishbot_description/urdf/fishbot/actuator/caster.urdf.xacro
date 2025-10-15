@@ -24,7 +24,9 @@
                 </material>
             </collision>
 
-            <xacro:sphere_inertia m="0.05" r="0.016" />
+            <inertial>
+                <xacro:sphere_inertia m="0.05" r="0.016" />
+            </inertial>
         </link>
 
         <joint name="${caster_name}_caster_joint" type="fixed">

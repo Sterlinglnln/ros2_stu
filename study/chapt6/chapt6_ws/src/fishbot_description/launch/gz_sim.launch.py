@@ -12,7 +12,7 @@ def generate_launch_description():
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
     
     # 定义文件路径
-    world_path = os.path.join(pkg_fishbot_description, 'worlds', 'model.sdf')
+    # world_path = os.path.join(pkg_fishbot_description, 'worlds', 'empty.sdf')
     xacro_path = os.path.join(pkg_fishbot_description, 'urdf', 'fishbot', 'fishbot.urdf.xacro')
     
     # 启动Gazebo仿真环境
@@ -21,7 +21,7 @@ def generate_launch_description():
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')
         ),
         # 传递世界文件参数
-        launch_arguments={'gz_args': f'-r {world_path}'}.items()
+        launch_arguments={'gz_args': '-r empty.sdf'}.items()
     )
 
     # 解析xacro文件，生成机器人描述
@@ -50,7 +50,7 @@ def generate_launch_description():
         arguments=[
             '-name', 'fishbot',
             '-topic', 'robot_description',
-            '-x', '1', '-y', '0', '-z', '0.1'
+            '-x', '0', '-y', '0', '-z', '0.1'
             ],
         output='screen'
     )
