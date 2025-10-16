@@ -12,7 +12,8 @@
     </node>
 
     <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
-        <arg name="gz_args" value="empty.sdf -r"/>
+        <!-- <arg name="gz_args" value="empty.sdf -r"/> -->
+        <arg name="gz_args" value="$(find-pkg-share fishbot_description)/worlds/test_world.sdf -r"/>
     </include>
 
     <node pkg="ros_gz_sim" exec="create" args="-topic robot_description "/>

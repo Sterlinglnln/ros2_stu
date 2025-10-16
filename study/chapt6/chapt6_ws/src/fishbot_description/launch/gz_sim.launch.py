@@ -12,6 +12,7 @@ def generate_launch_description():
     urdf_path = os.path.join(fishbot_desc_path, "urdf", "fishbot", "fishbot.urdf.xacro")
     rviz_config_path = os.path.join(fishbot_desc_path, "config", "display_robot_model.rviz")
     gazebo_config_path = os.path.join(fishbot_desc_path, "config", "ros_gz_bridge.yaml")
+    custom_world_path = os.path.join(fishbot_desc_path, "worlds", "test_world.sdf")
     
     # 1. 机器人状态发布节点
     robot_state_pub_node = launch_ros.actions.Node(
@@ -35,7 +36,7 @@ def generate_launch_description():
             )
         ),
         launch_arguments={
-            "gz_args": "empty.sdf -r"
+            "gz_args": f"{custom_world_path} -r"
         }.items()
     )
     
@@ -61,10 +62,10 @@ def generate_launch_description():
         package="rviz2",
         executable="rviz2",
         output="screen",
-        arguments=["-d", rviz_config_path]  # 保持原配置路径
+        arguments=["-d", rviz_config_path]
     )
     
-    # 组装所有启动项（与原XML节点顺序一致）
+    # 组装所有启动项
     return launch.LaunchDescription([
         robot_state_pub_node,
         gz_sim_launch,
