@@ -6,7 +6,7 @@ def generate_launch_description():
     # 获取包的共享目录
     pkg_share = get_package_share_directory('fishbot_description')
     
-    # 定义XACRO文件路径（改为 fishbot.urdf.xacro）
+    # 定义XACRO文件路径
     default_model_path = launch.substitutions.PathJoinSubstitution(
         [pkg_share, 'urdf', 'fishbot', 'fishbot.urdf.xacro']
     )

@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- 车轮物理属性 -->
+    <gazebo reference="left_wheel_link">
+        <mu1 value="20.0" />
+        <mu2 value="20.0" />
+        <kp value="1000000000.0" />
+        <kd value="1.0" />
+    </gazebo>
+
+    <gazebo reference="right_wheel_link">
+        <mu1 value="20.0" />
+        <mu2 value="20.0" />
+        <kp value="1000000000.0" />
+        <kd value="1.0" />
+    </gazebo>
+
+    <gazebo reference="front_caster_link">
+        <mu1 value="0.0" />
+        <mu2 value="0.0" />
+        <kp value="1000000000.0" />
+        <kd value="1.0" />
+    </gazebo>
+
+    <gazebo reference="back_caster_link">
+        <mu1 value="0.0" />
+        <mu2 value="0.0" />
+        <kp value="1000000000.0" />
+        <kd value="1.0" />
+    </gazebo>
+
+    <!-- 激光雷达插件配置 -->
+    <gazebo reference="laser_link">
+        <sensor name="laserscan" type="ray">
+            <always_on>true</always_on>
+            <visualize>true</visualize>
+            <update_rate>5</update_rate>
+            <pose>0 0 0 0 0 0</pose>
+
+            <!-- 激光雷达扫描参数 -->
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1</resolution>
+                        <min_angle>0</min_angle>
+                        <max_angle>6.2800000</max_angle>
+                    </horizontal>
+                </scan>
+                <!-- 设置扫描距离和分辨率 -->
+                <range>
+                    <min>0.12</min>
+                    <max>8.0</max>
+                    <resolution>0.015000</resolution>
+                </range>
+                <!-- 设置噪声 -->
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            
+        </sensor>
+    </gazebo>
+
+    <!-- 差速驱动插件配置 -->
+    <gazebo>
+        <plugin
+            filename="gz-sim-diff-drive-system"
+            name="gz::sim::systems::DiffDrive">
+            <left_joint>left_wheel_joint</left_joint>
+            <right_joint>right_wheel_joint</right_joint>
+            <wheel_separation>0.2</wheel_separation>
+            <wheel_radius>0.032</wheel_radius>
+            <frame_id>odom</frame_id>
+            <child_frame_id>base_footprint</child_frame_id>
+        </plugin>
+    </gazebo>
+
+    <!-- 关节状态发布插件配置 -->
+    <gazebo>
+        <plugin
+            filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher">
+            <joint_name>left_wheel_joint</joint_name>
+            <joint_name>right_wheel_joint</joint_name>
+        </plugin>
+    </gazebo>
+
+</robot>
