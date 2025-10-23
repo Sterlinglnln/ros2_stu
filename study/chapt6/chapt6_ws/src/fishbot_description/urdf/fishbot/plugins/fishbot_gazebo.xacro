@@ -30,40 +30,6 @@
         <kd value="1.0" />
     </gazebo>
 
-    <!-- 激光雷达插件配置 -->
-    <gazebo reference="laser_link">
-        <sensor name="laserscan" type="ray">
-            <always_on>true</always_on>
-            <visualize>true</visualize>
-            <update_rate>5</update_rate>
-            <pose>0 0 0 0 0 0</pose>
-
-            <!-- 激光雷达扫描参数 -->
-            <ray>
-                <scan>
-                    <horizontal>
-                        <samples>360</samples>
-                        <resolution>1</resolution>
-                        <min_angle>0</min_angle>
-                        <max_angle>6.2800000</max_angle>
-                    </horizontal>
-                </scan>
-                <!-- 设置扫描距离和分辨率 -->
-                <range>
-                    <min>0.12</min>
-                    <max>8.0</max>
-                    <resolution>0.015000</resolution>
-                </range>
-                <!-- 设置噪声 -->
-                <noise>
-                    <type>gaussian</type>
-                    <mean>0.0</mean>
-                    <stddev>0.01</stddev>
-                </noise>
-            </ray>
-        </sensor>
-    </gazebo>
-
     <!-- 差速驱动插件配置 -->
     <gazebo>
         <plugin
@@ -89,12 +55,12 @@
     </gazebo>
 
     <!-- 传感器系统插件 - 启用所有传感器（包括激光雷达） -->
-    <gazebo>
+    <!-- <gazebo>
         <plugin
             filename="gz-sim-sensors-system"
             name="gz::sim::systems::Sensors">
             <render_engine>ogre2</render_engine>
         </plugin>
-    </gazebo>
+    </gazebo> -->
 
 </robot>
