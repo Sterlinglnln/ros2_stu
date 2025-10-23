@@ -8,3 +8,6 @@ log/
 
 #macOS specific files
 .DS_Store
+
+#ignore worlds
+worlds/
