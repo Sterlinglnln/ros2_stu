@@ -65,6 +65,12 @@ def generate_launch_description():
         arguments=["-d", rviz_config_path],
     )
 
+    laser_frame_fix_node = Node(
+        package='fishbot_description',
+        executable='laser_frame_fix.py',
+        name='laser_frame_fixer'
+    )  
+
     # 组装所有启动项
     return LaunchDescription([
         robot_state_publisher_node,
@@ -72,4 +78,5 @@ def generate_launch_description():
         spawn_robot_node,
         bridge_node,
         rviz_node,
+        laser_frame_fix_node
     ])

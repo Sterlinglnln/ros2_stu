@@ -13,8 +13,13 @@ find_package(urdf REQUIRED)
 # find_package(<dependency> REQUIRED)
 
 install(
-  DIRECTORY launch config urdf worlds
+  DIRECTORY launch config urdf worlds scripts
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(
+  PROGRAMS scripts/laser_frame_fix.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()
