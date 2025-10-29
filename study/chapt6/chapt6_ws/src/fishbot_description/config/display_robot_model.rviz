@@ -5,14 +5,9 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /Status1
-        - /RobotModel1
         - /RobotModel1/Description Topic1
-        - /CameraInfo1
-        - /Camera1
-        - /LaserScan1
       Splitter Ratio: 0.5
-    Tree Height: 645
+    Tree Height: 787
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -183,45 +178,6 @@ Visualization Manager:
           {}
       Update Interval: 0
       Value: true
-    - Alpha: 0.5
-      Class: rviz_default_plugins/CameraInfo
-      Color: 85; 255; 255
-      Edge color: 125; 125; 125
-      Enabled: true
-      Far clip: 1
-      Name: CameraInfo
-      Not show side polygons: true
-      Show edges: true
-      Show polygons: true
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /camera/camera_info
-      Value: true
-    - Class: rviz_default_plugins/Camera
-      Enabled: true
-      Far Plane Distance: 100
-      Image Rendering: background and overlay
-      Name: Camera
-      Overlay Alpha: 0.5
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /camera/image_raw
-      Value: true
-      Visibility:
-        CameraInfo: true
-        Grid: true
-        LaserScan: true
-        RobotModel: true
-        TF: true
-        Value: true
-      Zoom Factor: 1
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -255,6 +211,78 @@ Visualization Manager:
         Value: /scan
       Use Fixed Frame: true
       Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /camera/points
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz_default_plugins/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Keep: 100
+      Name: Odometry
+      Position Tolerance: 0.10000000149011612
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 25; 0
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 1
+        Shaft Radius: 0.05000000074505806
+        Value: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /odom
       Value: true
   Enabled: true
   Global Options:
@@ -323,14 +351,12 @@ Visualization Manager:
       Yaw: 3.015015125274658
     Saved: ~
 Window Geometry:
-  Camera:
-    collapsed: false
   Displays:
     collapsed: false
-  Height: 2131
+  Height: 1083
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd00000001000000000000054f000007b3fc0200000007fb0000000c00430061006d0065007200610100000070000004300000000000000000fb0000000c00430061006d0065007200610100000070000004260000002800fffffffb000000100044006900730070006c00610079007301000004a2000003810000018600fffffffb0000001200530065006c0065006300740069006f006e0000000048000000a8000000b200fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730000000048000000dc000000b200fffffffb0000000a005600690065007700730000000048000002310000013800fffffffb0000000800540069006d00650000000048000002f40000005e00ffffff00000407000007b300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000001ca000003ddfc0200000007fb0000000c00430061006d006500720061010000003f000001ba0000000000000000fb0000000c00430061006d0065007200610100000070000004260000000000000000fb000000100044006900730070006c006100790073010000003f000003dd000000cc00fffffffb0000001200530065006c0065006300740069006f006e0000000048000000a80000005d00fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730000000048000000dc0000005d00fffffffb0000000a00560069006500770073000000004800000231000000a900fffffffb0000000800540069006d00650000000048000002f40000003c00ffffff00000371000003dd00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -339,6 +365,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 2402
-  X: 7838
-  Y: 64
+  Width: 1345
+  X: 1637
+  Y: 456
