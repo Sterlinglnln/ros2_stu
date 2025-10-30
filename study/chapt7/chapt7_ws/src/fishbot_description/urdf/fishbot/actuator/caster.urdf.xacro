@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro" />
+    <!-- 万向轮 -->
+    <xacro:macro name="caster_xacro" params="caster_name xyz">
+        <link name="${caster_name}_caster_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <sphere radius="0.016" />
+                </geometry>
+                <material name="yellow">
+                    <color rgba="1.0 1.0 0.0 0.8" />
+                </material>
+            </visual>
+
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <sphere radius="0.016" />
+                </geometry>
+                <material name="yellow">
+                    <color rgba="1.0 1.0 0.0 0.8" />
+                </material>
+            </collision>
+
+            <inertial>
+                <xacro:sphere_inertia m="0.05" r="0.016" />
+            </inertial>
+        </link>
+
+        <joint name="${caster_name}_caster_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="${caster_name}_caster_link"/>
+            <origin xyz="${xyz}" />
+            <axis xyz="0 0 0" />
+        </joint>
+
+        <!-- 万向轮物理属性配置-->
+        <gazebo reference="${caster_name}_caster_link">
+            <mu1>0.0</mu1>
+            <mu2>0.0</mu2>
+            <kp>1000000000.0</kp>
+            <kd>1.0</kd>
+        </gazebo>
+
+    </xacro:macro>
+</robot>
