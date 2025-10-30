@@ -35,5 +35,14 @@
             <origin xyz="${xyz}" />
             <axis xyz="0 0 0" />
         </joint>
+
+        <!-- 万向轮物理属性配置-->
+        <gazebo reference="${caster_name}_caster_link">
+            <mu1>0.0</mu1>
+            <mu2>0.0</mu2>
+            <kp>1000000000.0</kp>
+            <kd>1.0</kd>
+        </gazebo>
+
     </xacro:macro>
 </robot>

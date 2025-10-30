@@ -1,27 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <!-- 轮子摩擦力配置-->
-    <gazebo reference="left_wheel_link">
-        <mu1>1.0</mu1>
-        <mu2>1.0</mu2>
-    </gazebo>
-
-    <gazebo reference="right_wheel_link">
-        <mu1>1.0</mu1>
-        <mu2>1.0</mu2>
-    </gazebo>
-
-    <gazebo reference="front_caster_link">
-        <mu1>0.000001</mu1>
-        <mu2>0.000001</mu2>
-    </gazebo>
-
-    <gazebo reference="back_caster_link">
-        <mu1>0.000001</mu1>
-        <mu2>0.000001</mu2>
-    </gazebo>
-
     <gazebo>
         <!-- 差速驱动插件配置 -->
         <plugin

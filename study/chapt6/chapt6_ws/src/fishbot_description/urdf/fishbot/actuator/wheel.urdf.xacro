@@ -38,5 +38,14 @@
             <limit effort="100" velocity="100" />
             <dynamics damping="0.1" friction="0.1" />
         </joint>
+
+        <!-- 轮子物理属性配置-->
+        <gazebo reference="${wheel_name}_wheel_link">
+            <mu1>20.0</mu1>
+            <mu2>20.0</mu2>
+            <kp>1000000000.0</kp>
+            <kd>1.0</kd>
+        </gazebo>
+
     </xacro:macro>
 </robot>
