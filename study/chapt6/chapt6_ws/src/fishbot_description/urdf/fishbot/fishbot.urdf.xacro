@@ -12,6 +12,8 @@
     <xacro:include filename="$(find fishbot_description)/urdf/fishbot/actuator/caster.urdf.xacro" />
     <!-- 包含gazebo插件宏定义 -->
     <xacro:include filename="$(find fishbot_description)/urdf/fishbot/plugins/fishbot_gazebo.xacro" />
+    <!-- 包含ros2_control宏定义 -->
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/ros2_control/mobile_base.ros2_control.xacro" />
 
     <!-- 基座 -->
     <xacro:base_xacro length="0.12" radius="0.1" />
