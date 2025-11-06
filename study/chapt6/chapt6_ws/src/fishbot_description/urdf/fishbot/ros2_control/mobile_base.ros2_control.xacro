@@ -1,7 +1,6 @@
-<?xml version="1.0"?>
+<!-- <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <!--  ROS2 Control -->
     <ros2_control name="MobileBaseHardwareInterface" type="system">
         <hardware>
             <plugin>mock_components/GenericSystem</plugin>
@@ -19,4 +18,33 @@
         </joint>
     </ros2_control>
 
+</robot> -->
+
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <ros2_control name="MG6010System" type="system">
+      <hardware>
+        <plugin>mg6010_can_control/MG6010System</plugin>
+        <param name="can_interface">can0</param>
+        <param name="bitrate">1000000</param>
+      </hardware>
+
+      <joint name="left_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface   name="position"/>
+        <state_interface   name="velocity"/>
+        <state_interface   name="effort"/>
+        <param name="id">1</param>
+      </joint>
+
+      <joint name="right_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface   name="position"/>
+        <state_interface   name="velocity"/>
+        <state_interface   name="effort"/>
+        <param name="id">2</param>
+      </joint>
+    </ros2_control>
+  </xacro:macro>
 </robot>
