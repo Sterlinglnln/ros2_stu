@@ -9,5 +9,16 @@ log/
 #macOS specific files
 .DS_Store
 
-#ignore worlds
-worlds/
+#pycharm specific files
+.idea/
+
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore virtual environment directories
+venv/
+env/
+.venv/
+.env/
